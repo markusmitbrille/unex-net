@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-using static DebugUtils;
+using static Autrage.LEX.NET.DebugUtils;
 
 public class ContentBundleWindow : ExtendedWindow
 {

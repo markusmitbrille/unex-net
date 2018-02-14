@@ -1,10 +1,11 @@
-﻿using NLua;
+﻿using Autrage.LEX.NET.Serialization;
+using NLua;
 using System.Diagnostics;
 using UnityEngine;
 
-using static DebugUtils;
+using static Autrage.LEX.NET.DebugUtils;
 
-public class LuaSandbox : DataDrivenBehaviour
+public class LuaSandbox : MonoBehaviour
 {
     [TextArea]
     [SerializeField]

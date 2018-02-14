@@ -1,6 +1,7 @@
 ﻿using Autrage.LEX.NET.Extensions;
 using Autrage.LEX.NET.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;

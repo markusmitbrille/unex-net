@@ -12,15 +12,15 @@ internal class DebugListener : TraceListener
     {
         switch (category)
         {
-            case DebugUtils.LogCategory:
+            case Bugger.LogCategory:
                 UnityDebug.Log(o);
                 break;
 
-            case DebugUtils.WarningCategory:
+            case Bugger.WarningCategory:
                 UnityDebug.LogWarning(o);
                 break;
 
-            case DebugUtils.ErrorCategory:
+            case Bugger.ErrorCategory:
                 UnityDebug.LogError(o);
                 break;
 
@@ -34,15 +34,15 @@ internal class DebugListener : TraceListener
     {
         switch (category)
         {
-            case DebugUtils.LogCategory:
+            case Bugger.LogCategory:
                 UnityDebug.Log(message);
                 break;
 
-            case DebugUtils.WarningCategory:
+            case Bugger.WarningCategory:
                 UnityDebug.LogWarning(message);
                 break;
 
-            case DebugUtils.ErrorCategory:
+            case Bugger.ErrorCategory:
                 UnityDebug.LogError(message);
                 break;
 
@@ -60,15 +60,15 @@ internal class DebugListener : TraceListener
     {
         switch (category)
         {
-            case DebugUtils.LogCategory:
+            case Bugger.LogCategory:
                 UnityDebug.Log(o);
                 break;
 
-            case DebugUtils.WarningCategory:
+            case Bugger.WarningCategory:
                 UnityDebug.LogWarning(o);
                 break;
 
-            case DebugUtils.ErrorCategory:
+            case Bugger.ErrorCategory:
                 UnityDebug.LogError(o);
                 break;
 
@@ -82,15 +82,15 @@ internal class DebugListener : TraceListener
     {
         switch (category)
         {
-            case DebugUtils.LogCategory:
+            case Bugger.LogCategory:
                 UnityDebug.Log(message);
                 break;
 
-            case DebugUtils.WarningCategory:
+            case Bugger.WarningCategory:
                 UnityDebug.LogWarning(message);
                 break;
 
-            case DebugUtils.ErrorCategory:
+            case Bugger.ErrorCategory:
                 UnityDebug.LogError(message);
                 break;
 

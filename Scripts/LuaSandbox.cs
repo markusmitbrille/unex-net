@@ -3,7 +3,7 @@ using NLua;
 using System.Diagnostics;
 using UnityEngine;
 
-using static Autrage.LEX.NET.DebugUtils;
+using static Autrage.LEX.NET.Bugger;
 
 public class LuaSandbox : MonoBehaviour
 {

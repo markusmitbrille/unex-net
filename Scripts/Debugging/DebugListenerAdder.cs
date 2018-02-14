@@ -10,7 +10,7 @@ internal class DebugListenerAdder : MonoBehaviour
         if (!SystemDebug.Listeners.OfType<DebugListener>().Any())
         {
             SystemDebug.Listeners.Add(new DebugListener());
-            DebugUtils.Log("Added debug listener.");
+            Bugger.Log("Added debug listener.");
         }
 
         Destroy(this);

@@ -17,6 +17,11 @@ public static class GameObjectExtensions
         return gameObject.transform.parent?.gameObject;
     }
 
+    public static void SetParent(this GameObject gameObject, GameObject parent)
+    {
+        gameObject.transform.parent = parent.transform;
+    }
+
     public static IEnumerable<GameObject> GetChildren(this GameObject gameObject)
     {
         foreach (Transform child in gameObject.transform)

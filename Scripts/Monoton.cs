@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using static Autrage.LEX.NET.Bugger;
 
-public class Monoton<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class Monoton<T> : MonoBehaviour where T : Monoton<T>
 {
     private static T instance = null;
 
@@ -24,4 +25,25 @@ public class Monoton<T> : MonoBehaviour where T : MonoBehaviour
     }
 
     public static bool IsInitialized { get { return instance != null; } }
+
+    private void Awake()
+    {
+        T monoton = this as T;
+        if (monoton == null)
+        {
+            Warning($"{name} is not of type {typeof(T)}, destroying inconsistent monoton!");
+            Destroy(this);
+        }
+
+        if (instance == null)
+        {
+            instance = monoton;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Log($"Monoton {typeof(T)} already initialized, destroying superfluous instance.");
+            Destroy(this);
+        }
+    }
 }

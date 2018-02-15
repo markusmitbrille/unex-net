@@ -57,11 +57,11 @@ internal class Savegame
         return new Marshaller()
         {
             new BehaviourSerializer(),
-            new ComponentSerializer(),
             new GameObjectSerializer(),
             new PrimitiveSerializer(),
             new EnumSerializer(),
             new ValueTypeSerializer(),
+            new StringSerializer(),
             new ListSerializer(),
             new DictionarySerializer(),
             new GenericCollectionSerializer(),

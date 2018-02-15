@@ -8,36 +8,39 @@ using UnityObject = UnityEngine.Object;
 
 internal class Savegame : MonoBehaviour
 {
-    public HashSet<object> Items { get; } = new HashSet<object>(new ReferenceComparer());
+    private HashSet<object> items = new HashSet<object>(new ReferenceComparer());
 
-    public void Persist(Stream stream)
+    public static bool Register(object instance) => Monoton<Savegame>.Instance.items.Add(instance);
+
+    public static void Save(Stream stream) => Monoton<Savegame>.Instance.Persist(stream);
+
+    public static void Load(Stream stream) => Monoton<Savegame>.Instance.StartCoroutine(Monoton<Savegame>.Instance.Restore(stream));
+
+    private void Persist(Stream stream)
     {
         Marshaller marshaller = GetMarshaller();
-        marshaller.Serialize(stream, Items.Count);
-        foreach (var item in Items)
+        marshaller.Serialize(stream, items.Count);
+        foreach (var item in items)
         {
             marshaller.Serialize(stream, item);
         }
     }
 
-    public void Restore(Stream stream) => StartCoroutine(RestorationCoroutine(stream));
-
-    private IEnumerator RestorationCoroutine(Stream stream)
+    private IEnumerator Restore(Stream stream)
     {
-        foreach (UnityObject unityObject in Items.OfType<UnityObject>())
+        foreach (UnityObject unityObject in items.OfType<UnityObject>())
         {
             Destroy(unityObject);
         }
 
         yield return 0;
 
-        Items.Clear();
+        items = new HashSet<object>(new ReferenceComparer());
 
         Marshaller marshaller = GetMarshaller();
         for (int i = 0, count = marshaller.Deserialize<int>(stream); i < count; i++)
         {
-            marshaller.Deserialize(stream);
-            // Return value is ignored, since items are responsible for adding themselves to savegame
+            items.Add(marshaller.Deserialize(stream));
         }
     }
 

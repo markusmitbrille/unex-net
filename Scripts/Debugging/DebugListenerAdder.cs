@@ -3,9 +3,10 @@ using System.Linq;
 using UnityEngine;
 using SystemDebug = System.Diagnostics.Debug;
 
+[DefaultExecutionOrder(-32000)]
 internal class DebugListenerAdder : MonoBehaviour
 {
-    private void Start()
+    private void Awake()
     {
         if (!SystemDebug.Listeners.OfType<DebugListener>().Any())
         {

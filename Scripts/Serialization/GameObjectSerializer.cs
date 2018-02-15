@@ -86,30 +86,24 @@ internal class GameObjectSerializer : Serializer
         stream.Write(gameObject.layer);
         stream.Write(gameObject.activeSelf);
 
-        SerializeComponents(stream, gameObject);
+        SerializeBehaviours(stream, gameObject);
         SerializeParent(stream, gameObject);
 
         return true;
     }
 
-    private void SerializeComponents(Stream stream, GameObject gameObject)
+    private void SerializeBehaviours(Stream stream, GameObject gameObject)
     {
-        IEnumerable<Component> components =
-            from component in gameObject.GetComponents<Component>()
-            where !component.GetType().IsDefined(typeof(IgnoreComponentAttribute), true)
-            select component;
-
-        if (components.OfType<IgnoreComponents>().Any())
-        {
-            stream.Write(false);
-            return;
-        }
+        IEnumerable<MonoBehaviour> behaviours =
+            from behaviour in gameObject.GetComponents<MonoBehaviour>()
+            where behaviour.GetType().IsDefined(typeof(DataContractAttribute), true)
+            select behaviour;
 
         stream.Write(true);
-        stream.Write(components.Count());
-        foreach (Component component in components)
+        stream.Write(behaviours.Count());
+        foreach (MonoBehaviour behaviour in behaviours)
         {
-            Marshaller.Serialize(stream, component);
+            Marshaller.Serialize(stream, behaviour);
         }
     }
 
@@ -134,28 +128,28 @@ internal class GameObjectSerializer : Serializer
         gameObject.layer = stream.ReadInt() ?? 0;
         gameObject.SetActive(stream.ReadBool() ?? true);
 
-        DeserializeComponents(stream, gameObject);
+        DeserializeBehaviours(stream, gameObject);
         DeserializeParent(stream, gameObject);
     }
 
-    private void DeserializeComponents(Stream stream, GameObject gameObject)
+    private void DeserializeBehaviours(Stream stream, GameObject gameObject)
     {
         long? count = stream.ReadInt();
         if (count == null)
         {
-            Warning($"Could not read game object {gameObject.name} component count!");
+            Warning($"Could not read game object {gameObject.name} behaviour count!");
             return;
         }
 
         for (int i = 0; i < count.Value; i++)
         {
-            Component component = Marshaller.Deserialize<Component>(stream);
-            if (component == null)
+            MonoBehaviour behaviour = Marshaller.Deserialize<MonoBehaviour>(stream);
+            if (behaviour == null)
             {
-                Warning($"Could not deserialize component on game object {gameObject.name}!");
+                Warning($"Could not deserialize behaviour on game object {gameObject.name}!");
             }
 
-            // component value is not used since the component serializer is responsible for adding it to the game object
+            // behaviour value is not used since the behaviour serializer is responsible for adding it to the game object
         }
     }
 

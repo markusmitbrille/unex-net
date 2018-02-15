@@ -14,7 +14,7 @@ internal class BehaviourSerializer : ObjectSerializer
 
     private Dictionary<long, Behaviour> components = new Dictionary<long, Behaviour>();
 
-    public override bool CanHandle(Type type) => typeof(Behaviour).IsAssignableFrom(type);
+    public override bool CanHandle(Type type) => typeof(Behaviour).IsAssignableFrom(type) && type.IsDefined(typeof(DataContractAttribute), true);
 
     public override bool Serialize(Stream stream, object instance)
     {

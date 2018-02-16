@@ -9,10 +9,10 @@ using static Autrage.LEX.NET.Bugger;
 
 internal class BehaviourSerializer : ObjectSerializer
 {
-    private Dictionary<Behaviour, long> componentIDs = new Dictionary<Behaviour, long>();
+    private Dictionary<Behaviour, long> behaviourIDs = new Dictionary<Behaviour, long>();
     private long nextID = 0;
 
-    private Dictionary<long, Behaviour> components = new Dictionary<long, Behaviour>();
+    private Dictionary<long, Behaviour> behaviours = new Dictionary<long, Behaviour>();
 
     public override bool CanHandle(Type type) => typeof(Behaviour).IsAssignableFrom(type) && type.IsDefined(typeof(DataContractAttribute), true);
 
@@ -26,21 +26,20 @@ internal class BehaviourSerializer : ObjectSerializer
         }
 
         Behaviour behaviour = (Behaviour)instance;
-        if (componentIDs.ContainsKey(behaviour))
+        if (behaviourIDs.ContainsKey(behaviour))
         {
-            Marshaller.Serialize(stream, behaviour.gameObject);
-            stream.Write(componentIDs[behaviour]);
+            stream.Write(behaviourIDs[behaviour]);
             stream.Write(false);
             return true;
         }
 
         long id = nextID++;
-        componentIDs[behaviour] = id;
+        behaviourIDs[behaviour] = id;
 
-        Marshaller.Serialize(stream, behaviour.gameObject);
         stream.Write(id);
         stream.Write(true);
 
+        Marshaller.Serialize(stream, behaviour.gameObject);
         stream.Write(behaviour.enabled);
 
         return SerializeMembers(stream, behaviour);
@@ -54,13 +53,6 @@ internal class BehaviourSerializer : ObjectSerializer
             return null;
         }
 
-        GameObject gameObject = Marshaller.Deserialize<GameObject>(stream);
-        if (gameObject == null)
-        {
-            Warning($"Could not deserialize behaviour's game object!");
-            return null;
-        }
-
         long? id = stream.ReadLong();
         if (id == null)
         {
@@ -68,10 +60,23 @@ internal class BehaviourSerializer : ObjectSerializer
             return null;
         }
 
+        Behaviour behaviour = behaviours.GetValueOrDefault(id.Value);
+
         bool? hasPayload = stream.ReadBool();
         if (hasPayload == null)
         {
             Warning($"Could not read behaviour payload indicator!");
+            return null;
+        }
+        if (hasPayload == false)
+        {
+            return behaviour;
+        }
+
+        GameObject gameObject = Marshaller.Deserialize<GameObject>(stream);
+        if (gameObject == null)
+        {
+            Warning($"Could not deserialize behaviour's game object!");
             return null;
         }
 
@@ -82,19 +87,21 @@ internal class BehaviourSerializer : ObjectSerializer
             return null;
         }
 
-        Behaviour behaviour = components.GetValueOrDefault(id.Value);
         if (behaviour == null)
         {
             behaviour = (Behaviour)gameObject.AddComponent(type);
-            components[id.Value] = behaviour;
-        }
+            if (behaviour == null)
+            {
+                Warning($"Could not create {type} behaviour on {gameObject.name}!");
+                return null;
+            }
 
-        if (hasPayload == true)
-        {
-            DeserializeMembers(stream, behaviour);
+            behaviours[id.Value] = behaviour;
         }
 
         behaviour.enabled = enabled.Value;
+
+        DeserializeMembers(stream, behaviour);
 
         return behaviour;
     }

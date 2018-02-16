@@ -1,55 +1,44 @@
-﻿using Autrage.LEX.NET.Serialization;
+﻿using Autrage.LEX.NET;
+using Autrage.LEX.NET.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static Autrage.LEX.NET.Bugger;
 using UnityObject = UnityEngine.Object;
 
 internal class Savegame
 {
     private static HashSet<object> items = new HashSet<object>(new ReferenceComparer());
 
-    public static bool Register(object instance) => items.Add(instance);
+    public static IEnumerable<object> Items
+        => (from item in items where item != null select item).ToList();
 
-    public static void Save(Stream stream)
-    {
-        Log("Persisting savegame items.");
+    public static IEnumerable<UnityObject> UnityObjects
+        => from unityObject in items.OfType<UnityObject>() where unityObject != null select unityObject;
 
-        Marshaller marshaller = GetMarshaller();
-        marshaller.Serialize(stream, items.Count);
-        foreach (var item in items)
-        {
-            marshaller.Serialize(stream, item);
-        }
+    public static bool Register(object instance) => instance == null ? false : items.Add(instance);
 
-        Log("Savegame items persisted.");
-    }
+    public static void Save(Stream stream) => GetMarshaller().Serialize(stream, Items);
 
     public static void Load(Stream stream)
     {
-        Log("Restoring savegame items.");
-
-        Marshaller marshaller = GetMarshaller();
-        for (int i = 0, count = marshaller.Deserialize<int>(stream); i < count; i++)
+        IEnumerable<object> items = GetMarshaller().Deserialize<IEnumerable<object>>(stream);
+        if (items == null)
         {
-            items.Add(marshaller.Deserialize(stream));
+            Bugger.Warning("Could not deserialize savegame items!");
+            return;
         }
 
-        Log("Savegame items restored.");
+        Savegame.items = new HashSet<object>(items, new ReferenceComparer());
     }
 
     public static void Unload()
     {
-        Log("Clearing savegame items.");
-
-        foreach (UnityObject unityObject in items.OfType<UnityObject>())
+        foreach (UnityObject unityObject in UnityObjects)
         {
             UnityObject.Destroy(unityObject);
         }
 
         items = new HashSet<object>(new ReferenceComparer());
-
-        Log("Savegame items cleared, unity objects will be destroyed next frame.");
     }
 
     private static Marshaller GetMarshaller()
@@ -68,6 +57,7 @@ internal class Savegame
             new DelegateSerializer(),
             new ContractSerializer()
         };
+
         marshaller.TypeResolver = (assembly, name, b) => assembly.GetType(name);
         return marshaller;
     }

@@ -99,7 +99,6 @@ internal class GameObjectSerializer : Serializer
             where behaviour.GetType().IsDefined(typeof(DataContractAttribute), true)
             select behaviour;
 
-        stream.Write(true);
         stream.Write(behaviours.Count());
         foreach (MonoBehaviour behaviour in behaviours)
         {

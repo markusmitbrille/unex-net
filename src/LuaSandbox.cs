@@ -1,10 +1,11 @@
-﻿using NLua;
+﻿using Autrage.LEX.NET.Serialization;
+using NLua;
 using System.Diagnostics;
 using UnityEngine;
 
-using static DebugUtils;
+using static Autrage.LEX.NET.Bugger;
 
-public class LuaSandbox : DataDrivenBehaviour
+public class LuaSandbox : Monoton<LuaSandbox>
 {
     [TextArea]
     [SerializeField]
@@ -46,19 +47,6 @@ import('UnityEngine.UI')
         }
     }
 
-    private void Awake()
-    {
-        environment = new Lua();
-        environment.LoadCLRPackage();
-        environment.DoString(initEnvironmentChunk, "initEnvironment");
-    }
-
-    private void Update()
-    {
-        // Reset execution time each tick
-        executionTime = 0;
-    }
-
     public object[] DoString(string chunk, string chunkName)
     {
         if (executionTime > maximumExecutionTime)
@@ -74,5 +62,18 @@ import('UnityEngine.UI')
         executionTime += stopwatch.ElapsedMilliseconds;
 
         return results ?? new object[0];
+    }
+
+    private void Awake()
+    {
+        environment = new Lua();
+        environment.LoadCLRPackage();
+        environment.DoString(initEnvironmentChunk, "initEnvironment");
+    }
+
+    private void Update()
+    {
+        // Reset execution time each tick
+        executionTime = 0;
     }
 }

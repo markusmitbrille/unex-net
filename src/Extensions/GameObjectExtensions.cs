@@ -1,26 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public static class GameObjectExtensions
 {
-    public static bool HasParent(this GameObject gameObject)
-    {
-        return gameObject.transform.parent != null;
-    }
+    public static bool HasParent(this GameObject gameObject) => gameObject.transform.parent != null;
 
-    public static GameObject GetParent(this GameObject gameObject)
-    {
-        return gameObject.transform.parent?.gameObject;
-    }
+    public static GameObject GetParent(this GameObject gameObject) => gameObject.transform.parent?.gameObject;
 
-    public static void SetParent(this GameObject gameObject, GameObject parent)
-    {
-        gameObject.transform.parent = parent.transform;
-    }
+    public static void SetParent(this GameObject gameObject, GameObject parent) => gameObject.transform.parent = parent.transform;
 
     public static IEnumerable<GameObject> GetChildren(this GameObject gameObject)
     {
@@ -41,15 +28,9 @@ public static class GameObjectExtensions
         }
     }
 
-    public static bool HasParent(this MonoBehaviour behaviour)
-    {
-        return behaviour.transform.parent != null;
-    }
+    public static bool HasParent(this MonoBehaviour behaviour) => behaviour.transform.parent != null;
 
-    public static GameObject GetParent(this MonoBehaviour behaviour)
-    {
-        return behaviour.transform.parent?.gameObject;
-    }
+    public static GameObject GetParent(this MonoBehaviour behaviour) => behaviour.transform.parent?.gameObject;
 
     public static IEnumerable<GameObject> GetChildren(this MonoBehaviour behaviour)
     {

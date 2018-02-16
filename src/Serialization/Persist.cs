@@ -3,8 +3,5 @@
 [DisallowMultipleComponent]
 public sealed class Persist : MonoBehaviour
 {
-    private void Start()
-    {
-        Savegame.Register(gameObject);
-    }
+    private void Start() => Savegame.Register(gameObject);
 }

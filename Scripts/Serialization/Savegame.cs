@@ -54,7 +54,7 @@ internal class Savegame
 
     private static Marshaller GetMarshaller()
     {
-        return new Marshaller()
+        Marshaller marshaller = new Marshaller()
         {
             new BehaviourSerializer(),
             new GameObjectSerializer(),
@@ -68,5 +68,7 @@ internal class Savegame
             new DelegateSerializer(),
             new ContractSerializer()
         };
+        marshaller.TypeResolver = (assembly, name, b) => assembly.GetType(name);
+        return marshaller;
     }
 }

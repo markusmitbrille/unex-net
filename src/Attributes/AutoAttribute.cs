@@ -2,6 +2,6 @@
 using UnityEngine;
 
 [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-public class ReadOnlyAttribute : PropertyAttribute
+public class AutoAttribute : PropertyAttribute
 {
 }

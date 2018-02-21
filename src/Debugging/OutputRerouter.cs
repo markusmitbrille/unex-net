@@ -1,11 +1,12 @@
 ﻿using Autrage.LEX.NET;
 using Autrage.LEX.NET.Extensions;
+using System;
 using System.Linq;
 using UnityEngine;
 using SystemDebug = System.Diagnostics.Debug;
 
 [DefaultExecutionOrder(-32000)]
-internal class DebugListenerAdder : MonoBehaviour
+internal class OutputRerouter : MonoBehaviour
 {
     private void Awake()
     {
@@ -14,6 +15,9 @@ internal class DebugListenerAdder : MonoBehaviour
             SystemDebug.Listeners.Add(new DebugListener());
             Bugger.Log("Added debug listener.");
         }
+
+        Console.SetOut(new ConsoleWriter());
+        Console.Write("Set Console Out.");
 
         Destroy(this);
     }

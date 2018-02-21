@@ -1,4 +1,5 @@
 ﻿using Autrage.LEX.NET;
+using Autrage.LEX.NET.Extensions;
 using System.Linq;
 using UnityEngine;
 using SystemDebug = System.Diagnostics.Debug;
@@ -8,7 +9,7 @@ internal class DebugListenerAdder : MonoBehaviour
 {
     private void Awake()
     {
-        if (!SystemDebug.Listeners.OfType<DebugListener>().Any())
+        if (SystemDebug.Listeners.OfType<DebugListener>().None())
         {
             SystemDebug.Listeners.Add(new DebugListener());
             Bugger.Log("Added debug listener.");

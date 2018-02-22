@@ -9,7 +9,7 @@ using UnityEngine;
 [CustomPropertyDrawer(typeof(AutoAttribute))]
 public class AutoAttributeDrawer : PropertyDrawer
 {
-    public static int NextID => Fields.Max(field => field.ID) + 1;
+    public static int NextID => Fields.Any() ? Fields.Max(field => field.ID) + 1 : 1;
 
     private static IEnumerable<IDField> Fields =>
         from mono in Resources.FindObjectsOfTypeAll<MonoBehaviour>()
@@ -73,7 +73,7 @@ public class AutoAttributeDrawer : PropertyDrawer
 
     [MenuItem("IDs/Validate IDs %&v", validate = true)]
     [MenuItem("IDs/Redistribute IDs %&r", validate = true)]
-    static bool IsNotPlaying() => !Application.isPlaying;
+    private static bool IsNotPlaying() => !Application.isPlaying;
 
     private struct IDField
     {

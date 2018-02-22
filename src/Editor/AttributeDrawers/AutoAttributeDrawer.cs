@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
 [CustomPropertyDrawer(typeof(AutoAttribute))]
 public class AutoAttributeDrawer : PropertyDrawer
@@ -12,11 +13,11 @@ public class AutoAttributeDrawer : PropertyDrawer
     public static int NextID => Fields.Any() ? Fields.Max(field => field.ID) + 1 : 1;
 
     private static IEnumerable<IDField> Fields =>
-        from mono in Resources.FindObjectsOfTypeAll<MonoBehaviour>()
-        from field in mono.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+        from instance in Resources.FindObjectsOfTypeAll<UnityObject>()
+        from field in instance.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
         where field.IsDefined(typeof(AutoAttribute))
         where field.FieldType == typeof(int)
-        select new IDField(mono, field);
+        select new IDField(instance, field);
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
@@ -56,7 +57,7 @@ public class AutoAttributeDrawer : PropertyDrawer
         {
             if (field.ID <= lastID)
             {
-                field.Info.SetValue(field.Mono, nextID++);
+                field.Info.SetValue(field.Instance, nextID++);
             }
         }
     }
@@ -67,7 +68,7 @@ public class AutoAttributeDrawer : PropertyDrawer
         int nextID = default(int) + 1;
         foreach (IDField field in Fields)
         {
-            field.Info.SetValue(field.Mono, nextID++);
+            field.Info.SetValue(field.Instance, nextID++);
         }
     }
 
@@ -77,15 +78,15 @@ public class AutoAttributeDrawer : PropertyDrawer
 
     private struct IDField
     {
-        public MonoBehaviour Mono { get; }
+        public UnityObject Instance { get; }
 
         public FieldInfo Info { get; }
 
-        public int ID => (int)Info.GetValue(Mono);
+        public int ID => (int)Info.GetValue(Instance);
 
-        public IDField(MonoBehaviour mono, FieldInfo field) : this()
+        public IDField(UnityObject instance, FieldInfo field) : this()
         {
-            Mono = mono;
+            Instance = instance;
             Info = field;
         }
     }
